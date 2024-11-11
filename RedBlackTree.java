@@ -11,7 +11,7 @@ class RBTNode {
   public RBTNode(char key) {
       this.key = key;
       this.isRed = true; // New nodes are red by default
-      this.left = RBT.NIL;
+      this.left = RBT.NIL; 
       this.right = RBT.NIL;
       this.parent = RBT.NIL;
   }
@@ -130,50 +130,60 @@ class RBT {
   }    
   
   private void fixUpInsert(RBTNode node) {
-      while (node != root && node.parent != NIL && node.parent.isRed) {
-          RBTNode parent = node.parent;
-          RBTNode grandParent = parent.parent;
+    while (node != root && node.parent != NIL && node.parent.isRed) {
+        RBTNode parent = node.parent;
+        RBTNode grandParent = parent.parent;
 
-          if (grandParent == NIL) break;
+        if (grandParent == NIL) break;
 
-          if (parent == grandParent.left) {
-              RBTNode uncle = grandParent.right;
+        if (parent == grandParent.left) {
+            RBTNode uncle = grandParent.right;
 
-              if (uncle != NIL && uncle.isRed) {
-                  grandParent.isRed = true;
-                  parent.isRed = false;
-                  uncle.isRed = false;
-                  node = grandParent;
-              } else {
-                  if (node == parent.right) {
-                      node = parent;
-                      rotateLeft(node);
-                  }
-                  parent.isRed = false;
-                  grandParent.isRed = true;
-                  rotateRight(grandParent);
-              }
-          } else {
-              RBTNode uncle = grandParent.left;
+            if (uncle != NIL && uncle.isRed) {
+                // Case 1: Uncle is red
+                grandParent.isRed = true;
+                parent.isRed = false;
+                uncle.isRed = false;
+                node = grandParent; // Move up the tree
+            } else {
+                // Case 2: Uncle is black
+                if (node == parent.right) {
+                    // Left-Right case
+                    rotateLeft(parent);
+                    node = parent; // Update node to parent for the next iteration
+                    parent = node.parent; // Update parent
+                }
+                // Left-Left case
+                parent.isRed = false;
+                grandParent.isRed = true;
+                rotateRight(grandParent);
+            }
+        } else {
+            RBTNode uncle = grandParent.left;
 
-              if (uncle != NIL && uncle.isRed) {
-                  grandParent.isRed = true;
-                  parent.isRed = false;
-                  uncle.isRed = false;
-                  node = grandParent;
-              } else {
-                  if (node == parent.left) {
-                      node = parent;
-                      rotateRight(node);
-                  }
-                  parent.isRed = false;
-                  grandParent.isRed = true;
-                  rotateLeft(grandParent);
-              }
-          }
-      }
-      root.isRed = false;
-  }
+            if (uncle != NIL && uncle.isRed) {
+                // Case 1: Uncle is red
+                grandParent.isRed = true;
+                parent.isRed = false;
+                uncle.isRed = false;
+                node = grandParent; // Move up the tree
+            } else {
+                // Case 2: Uncle is black
+                if (node == parent.left) {
+                    // Right-Left case
+                    rotateRight(parent);
+                    node = parent; // Update node to parent for the next iteration
+                    parent = node.parent; // Update parent
+                }
+                // Right-Right case
+                parent.isRed = false;
+                grandParent.isRed = true;
+                rotateLeft(grandParent);
+            }
+        }
+    }
+    root.isRed = false; // Ensure the root is black
+}
 
   public RBTNode search(char key){
       return searchRec(root, key);
