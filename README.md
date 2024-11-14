@@ -1,1 +1,0 @@
-FCK IT MFCKRS
